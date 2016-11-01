@@ -6,6 +6,6 @@ const board = new five.Board({
 });
 
 board.on("ready", () => {
-  	let led = new five.Led(15);
-  	led.blink();
+	let servo = new five.Servo(26);	 
+	servo.min();
 });

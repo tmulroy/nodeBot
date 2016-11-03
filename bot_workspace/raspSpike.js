@@ -6,6 +6,15 @@ const board = new five.Board({
 });
 
 board.on("ready", () => {
-	let servo = new five.Servo(26);	 
-	servo.min();
+	console.log("ready");
+	const virtual = new five.Board.Virtual(
+		new five.Expander("PCA9685")
+	);	
+	const servo = new five.Servo({
+		address: 0x40,
+		controller: "PCA9685",
+		pin: 0,
+	});
+	servo.sweep();
 });
+

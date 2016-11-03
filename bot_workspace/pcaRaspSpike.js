@@ -11,8 +11,9 @@ const options = {
 };
 // pulse lengths in microseconds (theoretically, 1.5 ms
 // is the middle of a typical servo's range)
-var pulseLengths = [1300, 1500, 1700];
-var steeringChannel = 0;
+const pulseLengths = [1300, 1500, 1700];
+const shoulderJoint = 0;
+const elbowJoint = 7;
 
 // variables used in servoLoop
 let pwm;
@@ -21,9 +22,10 @@ let timer;
 
 // loop to cycle through pulse lengths
 function servoLoop() {
-    timer = setTimeout(servoLoop, 1000);
+    timer = setTimeout(servoLoop, 500);
 
-    pwm.setPulseLength(steeringChannel, pulseLengths[nextPulse]);
+    pwm.setPulseLength(shoulderJoint, pulseLengths[nextPulse]);
+    pwm.setPulseLength(elbowJoint, pulseLengths[nextPulse]);
     nextPulse = (nextPulse + 1) % pulseLengths.length;
 }
 

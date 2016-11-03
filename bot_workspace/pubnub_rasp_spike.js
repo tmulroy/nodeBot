@@ -1,6 +1,40 @@
 "use strict";
-const i2cBus = require("i2c-bus");
-const Pca9685Driver = require("pca9685").Pca9685Driver;
+const i2cBus = require('i2c-bus');
+const Pca9685Driver = require('pca9685').Pca9685Driver;
+const PubNub = require('pubnub');
+require('dotenv').config();
+
+const pubnub = new PubNub({
+  subscribeKey: process.env.SUBSCRIBE_KEY,
+  publishKey: process.env.PUBLISH_KEY,
+  logVerbosity: false,
+});
+
+pubnub.subscribe({
+  channels: [process.env.CHANNEL],
+  withPresence: true
+});
+
+let commandToStart = false;
+pubnub.addListener({
+  message: (m) => {
+    let channelName = m.channel;
+    let pubTT = m.timetoken;
+    let msg = m.message;
+    commandToStart = msg.start;
+    console.log(`commandToStart: ${commandToStart}`)
+  },
+  presence: function(p) {
+       let action = p.action;
+       let channelName = p.channel;
+       let occupancy = p.occupancy;
+       let publishTime = p.timestamp;
+       let timetoken = p.timetoken;
+   },
+   status: function(s) {
+     console.log(`status: ${s}`)
+   }
+});
 
 // PCA9685 options
 const options = {
@@ -54,6 +88,10 @@ pwm = new Pca9685Driver(options, function startLoop(err) {
     }
 
     console.log("Starting servo loop...");
-    servoLoop();
+    if (commandToStart){
+      servoLoop();
+    } else {
+      console.log('commandToStart either false or not reported')
+    }
 });
 

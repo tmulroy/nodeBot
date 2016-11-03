@@ -15,6 +15,6 @@ board.on("ready", () => {
 		controller: "PCA9685",
 		pin: 0,
 	});
-	servo.sweep();
+	servo.to(150);
 });
 

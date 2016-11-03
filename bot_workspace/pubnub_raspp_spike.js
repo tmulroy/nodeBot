@@ -58,17 +58,21 @@ let timer;
 
 // loop to cycle through pulse lengths
 function servoLoop() {
+  if (commandToStart) {
     timer = setTimeout(servoLoop, 500);
-
+    
     pwm.setPulseLength(shoulderJoint, pulseLengths[nextPulse]);
     pwm.setPulseLength(elbowJoint, pulseLengths[nextPulse]);
     pwm.setPulseLength(wristJoint, pulseLengths[nextPulse]);
     pwm.setPulseLength(gripper, pulseLengths[nextPulse]);
     nextPulse = (nextPulse + 1) % pulseLengths.length;
+  } else {
+    console.log(`commandToStart: ${commandToStart}`);
+  }
 }
 
 // set-up CTRL-C with graceful shutdown
-process.on("SIGINT", function () {
+process.on("SIGINT", () => {
     console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
 
     if (timer) {
@@ -79,7 +83,6 @@ process.on("SIGINT", function () {
     pwm.allChannelsOff();
 });
 
-
 // initialize PCA9685 and start loop once initialized
 pwm = new Pca9685Driver(options, function startLoop(err) {
     if (err) {
@@ -88,10 +91,7 @@ pwm = new Pca9685Driver(options, function startLoop(err) {
     }
 
     console.log("Starting servo loop...");
-    if (commandToStart){
+    //need to call this if statement continuouslt
       servoLoop();
-    } else {
-      console.log('commandToStart either false or not reported')
-    }
 });
 

@@ -54,6 +54,17 @@ function moveShoulderCounterClockwise() {
   console.log(`currentPosition after move: ${currentPositionAfterMove}`)
 }  
 
+function moveShoulderClockwise() {
+  let currentPositionBeforeMove = getCurrentShoulderXPosition();
+  console.log('--------------------------------------------------------')
+  console.log(`shoulder horizontal position before move: ${currentPositionBeforeMove}`)
+  shoulderXPositions.push(currentPositionBeforeMove+500)
+  console.log(`shoulder horizontal position history: ${shoulderXPositions}`)
+  pwm.setPulseLength(shoulderX, currentPositionBeforeMove+500);
+  let currentPositionAfterMove = getCurrentShoulderXPosition();
+  console.log(`currentPosition after move: ${currentPositionAfterMove}`)
+}  
+
 function moveShoulderDown() {
   let currentPositionBeforeMove = getCurrentShoulderYPosition();
   console.log('--------------------------------------------------------')
@@ -100,5 +111,7 @@ pwm = new Pca9685Driver(options, function startLoop(err) {
     moveShoulderCounterClockwise();
     moveShoulderDown();
     moveShoulderUp();
+    moveShoulderClockwise();
+    moveShoulderCounterClockwise();
 });
 

@@ -16,7 +16,10 @@ const options = {
 const pulseLengths = [1000, 2800];
 let shoulderXPositions = [];
 let shoulderYPositions = [];
-const elbowJoint = 7;
+let elbowXPositions = [];
+let elbowYPositions = [];
+const elbowX = 11;
+const elbowY = 8;
 const shoulderX = 12;
 const shoulderY = 15;
 
@@ -28,8 +31,12 @@ let timer;
 function initalizeServos(){
   console.log('--------------------------------------------------------')
   console.log('initializing servos...');
-  pwm.setPulseLength(shoulderX, 1500)
-  pwm.setPulseLength(shoulderY, 1500)
+  pwm.setPulseLength(shoulderX, 1500);
+  pwm.setPulseLength(shoulderY, 1500);
+  pwm.setPulseLength(elbowX, 1500);
+  pwm.setPulseLength(elbowY, 1500);
+  elbowXPositions.push(1500);
+  elbowYPositions.push(1500);
   shoulderXPositions.push(1500);
   shoulderYPositions.push(1500);
   console.log('initialization complete')
@@ -41,6 +48,36 @@ function getCurrentShoulderYPosition(){
 
 function getCurrentShoulderXPosition(){
   return shoulderXPositions[shoulderXPositions.length-1];
+}
+
+function getCurrentElbowXPosition(){
+  return elbowXPositions[elbowXPositions.length-1];
+}
+
+function getCurrentElbowYPosition(){
+  return elbowYPositions[elbowYPositions.length-1];
+}
+
+function moveElbowCounterClockwise(){
+    let currentPositionBeforeMove = getCurrentElbowXPosition();
+    console.log('--------------------------------------------------------')
+    console.log(`elbow horizontal position before move: ${currentPositionBeforeMove}`)
+    elbowXPositions.push(currentPositionBeforeMove-500)
+    console.log(`elbow horizontal position history: ${elbowXPositions}`)
+    pwm.setPulseLength(elbowX, currentPositionBeforeMove-500);
+    let currentPositionAfterMove = getCurrentElbowXPosition();
+    console.log(`currentPosition after move: ${currentPositionAfterMove}`)
+}
+
+function moveElbowClockwise() {
+  let currentPositionBeforeMove = getCurrentElbowYPosition();
+  console.log('--------------------------------------------------------')
+  console.log(`elbow horizontal position before move: ${currentPositionBeforeMove}`)
+  elbowYPositions.push(currentPositionBeforeMove+500)
+  console.log(`elbow horizontal position history: ${elbowYPositions}`)
+  pwm.setPulseLength(elbowX, currentPositionBeforeMove+500);
+  let currentPositionAfterMove = getCurrentElbowYPosition();
+  console.log(`currentPosition after move: ${currentPositionAfterMove}`)
 }
 
 function moveShoulderCounterClockwise() {
@@ -108,10 +145,8 @@ pwm = new Pca9685Driver(options, function startLoop(err) {
     }
     //need to call this if statement continuouslt
     initalizeServos();
-    moveShoulderCounterClockwise();
-    moveShoulderDown();
-    moveShoulderUp();
-    moveShoulderClockwise();
-    moveShoulderCounterClockwise();
+    // moveElbowClockwise();
+    moveElbowCounterClockwise();
+
 });
 

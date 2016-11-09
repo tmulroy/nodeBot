@@ -4,7 +4,7 @@ const Pca9685Driver = require('pca9685').Pca9685Driver;
 const PubNub = require('pubnub');
 require('dotenv').config();
 
-let moveJoint = false;
+let moveJoint = true;
 let jointToMove = "";
 let direction = "";
 
@@ -27,19 +27,6 @@ pubnub.addListener({
     jointToMove = msg.joint;
     moveJoint = msg.start;
     direction = msg.direction
-    if (moveJoint == true && direction == "down") {
-      moveShoulderDown()
-    } else if (moveJoint == true && direction =="up"){
-      moveShoulderUp();
-    } else if (moveJoint == true && direction == "left") {
-      moveShoulderCounterClockwise();
-    }
-      else if (moveJoint == true && direction == "right") {
-        moveShoulderClockwise();
-      }
-      else {
-        console.log('no movement detected')
-      }
   },
   presence: function(p) {
        let action = p.action;
@@ -193,8 +180,17 @@ pwm = new Pca9685Driver(options, function startLoop(err) {
     if (err) {
         console.error("Error initializing PCA9685");
         process.exit(-1);
+    } else {
+      initalizeServos();
+  //     timer = setTimeout(() => {
+  //       moveElbowClockwise();
+  //       moveElbowClockwise();
+ // 	moveElbowCounterClockwise();
+	// moveElbowClockwise();
+	// moveShoulderClockwise();
+	// moveShoulderCounterClockwise();
+      // }, 1000);
     }
-    initalizeServos();
     //need to call this if statement continuouslt
   // while (true) {
   //   if (moveJoint===true) {
@@ -203,7 +199,5 @@ pwm = new Pca9685Driver(options, function startLoop(err) {
   //     console.log('no joint selected')
   //   }
   // }
-
-
 });
 
